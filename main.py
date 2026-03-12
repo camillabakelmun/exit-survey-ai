@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Literal
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import google.generativeai as genai
@@ -9,21 +9,17 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# 1. The Single Competitor Schema
-
 
 class CompetitorInsight(BaseModel):
     primary_competitor_name: str
     competitor_category: str
     is_ai_tool: bool
-
-# 2. FIX: Wrap the list inside a standard BaseModel so Gemini doesn't crash
+    # NEW: We force the AI to choose one of these exact three words
+    sentiment: Literal['Positive', 'Negative', 'Neutral']
 
 
 class CompetitorList(BaseModel):
     competitors: List[CompetitorInsight]
-
-# 3. The Final API Response Schema
 
 
 class APIResponse(BaseModel):
@@ -37,9 +33,11 @@ app = FastAPI()
 @app.post("/extract-competitor", response_model=APIResponse)
 async def extract_competitor(messy_comment: str):
     try:
+        # NEW: We updated the instructions to ask for sentiment
         prompt = f"""
         Extract all competitors mentioned in the following customer exit survey comment.
-        For each competitor, identify their category and if they are an AI tool.
+        For each competitor, identify their category, if they are an AI tool, 
+        and the user's sentiment towards that competitor (Positive, Negative, or Neutral).
         Comment: "{messy_comment}"
         """
 
@@ -53,7 +51,6 @@ async def extract_competitor(messy_comment: str):
             )
         )
 
-        # Validate the AI's output
         parsed_ai_data = CompetitorList.model_validate_json(result.text)
 
         return APIResponse(
@@ -62,7 +59,6 @@ async def extract_competitor(messy_comment: str):
         )
 
     except Exception as e:
-        # If anything breaks, show the exact error in the API response!
         raise HTTPException(status_code=500, detail=str(e))
 
 
