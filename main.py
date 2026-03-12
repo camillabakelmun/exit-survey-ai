@@ -1,7 +1,7 @@
 import os
 from typing import List
-from fastapi import FastAPI
-from pydantic import BaseModel, RootModel
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -17,51 +17,53 @@ class CompetitorInsight(BaseModel):
     competitor_category: str
     is_ai_tool: bool
 
-# 2. The LLM Output Schema (A list of competitors)
+# 2. FIX: Wrap the list inside a standard BaseModel so Gemini doesn't crash
 
 
-class CompetitorList(RootModel):
-    root: List[CompetitorInsight]
+class CompetitorList(BaseModel):
+    competitors: List[CompetitorInsight]
 
-# 3. NEW: The Final API Response Schema
+# 3. The Final API Response Schema
 
 
 class APIResponse(BaseModel):
     original_comment: str
-    ai_cleaned_data: CompetitorList  # Embeds the structured list directly!
+    ai_cleaned_data: CompetitorList
 
 
 app = FastAPI()
 
-# NEW: We tell FastAPI exactly what shape to return using response_model
-
 
 @app.post("/extract-competitor", response_model=APIResponse)
 async def extract_competitor(messy_comment: str):
-    prompt = f"""
-    Extract all competitors mentioned in the following customer exit survey comment.
-    For each competitor, identify their category and if they are an AI tool.
-    Comment: "{messy_comment}"
-    """
+    try:
+        prompt = f"""
+        Extract all competitors mentioned in the following customer exit survey comment.
+        For each competitor, identify their category and if they are an AI tool.
+        Comment: "{messy_comment}"
+        """
 
-    model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
 
-    result = model.generate_content(
-        prompt,
-        generation_config=genai.types.GenerationConfig(
-            response_mime_type="application/json",
-            response_schema=CompetitorList
+        result = model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                response_mime_type="application/json",
+                response_schema=CompetitorList
+            )
         )
-    )
 
-    # NEW: Validate the AI's text and convert it into a true Python object
-    parsed_ai_data = CompetitorList.model_validate_json(result.text)
+        # Validate the AI's output
+        parsed_ai_data = CompetitorList.model_validate_json(result.text)
 
-    # Return the data matching the APIResponse schema
-    return APIResponse(
-        original_comment=messy_comment,
-        ai_cleaned_data=parsed_ai_data
-    )
+        return APIResponse(
+            original_comment=messy_comment,
+            ai_cleaned_data=parsed_ai_data
+        )
+
+    except Exception as e:
+        # If anything breaks, show the exact error in the API response!
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/list-models")
