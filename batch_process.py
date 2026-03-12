@@ -1,11 +1,9 @@
 import pandas as pd
 import requests
-import json
 import time
 
-# 1. Configuration - REPLACE with your actual Render URL (ensure it ends in /extract-competitor)
+# 1. Configuration - Pointing to your live Render API
 API_URL = "https://exit-survey-ai.onrender.com/extract-competitor"
-
 INPUT_FILE = "fake_exit_survey.csv"
 OUTPUT_FILE = "cleaned_exit_survey.csv"
 
@@ -32,15 +30,15 @@ def process_survey():
 
             if response.status_code == 200:
                 raw_data = response.json()
-                # Because we used RootModel, clean_json is now a LIST of competitors
-                clean_json = json.loads(raw_data['ai_cleaned_data'])
+                # The API now returns true JSON, so we just access the list directly
+                clean_json = raw_data.get('ai_cleaned_data', [])
 
                 if isinstance(clean_json, list) and len(clean_json) > 0:
                     # We combine multiple competitors into single strings so they fit in one CSV row
                     combined_result = {
-                        "competitor_names": ", ".join([c['primary_competitor_name'] for c in clean_json]),
-                        "categories": ", ".join([c['competitor_category'] for c in clean_json]),
-                        "any_ai_tools": any([c['is_ai_tool'] for c in clean_json])
+                        "competitor_names": ", ".join([c.get('primary_competitor_name', '') for c in clean_json]),
+                        "categories": ", ".join([c.get('competitor_category', '') for c in clean_json]),
+                        "any_ai_tools": any([c.get('is_ai_tool', False) for c in clean_json])
                     }
                     results.append(combined_result)
                 else:

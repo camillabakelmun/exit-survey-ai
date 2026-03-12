@@ -1,4 +1,4 @@
-Country,Career,Bundle,User Id,Exit Reason,Comment,primary_competitor_name,competitor_category,is_ai_tool
+Country,Career,Bundle,User Id,Exit Reason,Comment,competitor_names,categories,any_ai_tools
 United Kingdom,parent,ultimate,9988771,I'm using an alternative resource provider,chat gtp,Error,Error,
 United States,teacher,ks2,9988772,I'm using an alternative resource provider,IXL and also k5 learning,Error,Error,
 Canada,parent,ey,9988773,I'm using an alternative resource provider,privat tutor,Error,Error,

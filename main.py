@@ -9,7 +9,7 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Define the structure for a SINGLE competitor
+# 1. The Single Competitor Schema
 
 
 class CompetitorInsight(BaseModel):
@@ -17,20 +17,27 @@ class CompetitorInsight(BaseModel):
     competitor_category: str
     is_ai_tool: bool
 
-# Define a List of competitors (The "RootModel" fix)
-# This tells the AI: "You can return one, zero, or ten competitors in a list"
+# 2. The LLM Output Schema (A list of competitors)
 
 
 class CompetitorList(RootModel):
     root: List[CompetitorInsight]
 
+# 3. NEW: The Final API Response Schema
+
+
+class APIResponse(BaseModel):
+    original_comment: str
+    ai_cleaned_data: CompetitorList  # Embeds the structured list directly!
+
 
 app = FastAPI()
 
+# NEW: We tell FastAPI exactly what shape to return using response_model
 
-@app.post("/extract-competitor")
+
+@app.post("/extract-competitor", response_model=APIResponse)
 async def extract_competitor(messy_comment: str):
-    # Updated Prompt to handle multiple mentions
     prompt = f"""
     Extract all competitors mentioned in the following customer exit survey comment.
     For each competitor, identify their category and if they are an AI tool.
@@ -39,7 +46,6 @@ async def extract_competitor(messy_comment: str):
 
     model = genai.GenerativeModel('gemini-2.5-flash')
 
-    # We use CompetitorList here so it returns a list of results
     result = model.generate_content(
         prompt,
         generation_config=genai.types.GenerationConfig(
@@ -48,7 +54,14 @@ async def extract_competitor(messy_comment: str):
         )
     )
 
-    return {"original_comment": messy_comment, "ai_cleaned_data": result.text}
+    # NEW: Validate the AI's text and convert it into a true Python object
+    parsed_ai_data = CompetitorList.model_validate_json(result.text)
+
+    # Return the data matching the APIResponse schema
+    return APIResponse(
+        original_comment=messy_comment,
+        ai_cleaned_data=parsed_ai_data
+    )
 
 
 @app.get("/list-models")
