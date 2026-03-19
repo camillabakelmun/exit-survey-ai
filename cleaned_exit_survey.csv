@@ -1,11 +1,11 @@
-Country,Career,Bundle,User Id,Exit Reason,Comment,competitor_names,categories,any_ai_tools
-United Kingdom,parent,ultimate,9988771,I'm using an alternative resource provider,chat gtp,Error,Error,
-United States,teacher,ks2,9988772,I'm using an alternative resource provider,IXL and also k5 learning,Error,Error,
-Canada,parent,ey,9988773,I'm using an alternative resource provider,privat tutor,Error,Error,
-Australia,esl,ultimate,9988774,I'm using an alternative resource provider,reading eggs!,Error,Error,
-New Zealand,parent,ks1,9988775,I'm using an alternative resource provider,canva,Error,Error,
-India,parent,ks3,9988776,I'm using an alternative resource provider,youtube videos,Error,Error,
-United Kingdom,educator,ultimate,9988777,I'm using an alternative resource provider,teachers pay teachers,Error,Error,
-South Africa,parent,ks2,9988778,I'm using an alternative resource provider,just using chatgpt now,Error,Error,
-Ireland,parent,ey,9988779,I'm using an alternative resource provider,abc mouse,Error,Error,
-United States,parent,ultimate,9988780,I'm using an alternative resource provider,my local school provides ixl,Error,Error,
+Country,Career,Bundle,User Id,Exit Reason,Comment,Competitor Name,Category,Is AI,Sentiment
+United Kingdom,parent,ultimate,9988771,I'm using an alternative resource provider,chat gtp,ChatGPT,AI Chatbot,Yes,Neutral
+United States,teacher,ks2,9988772,I'm using an alternative resource provider,IXL and also k5 learning,"IXL, k5 learning","Online Learning Platform, Online Learning Platform","No, No","Neutral, Neutral"
+Canada,parent,ey,9988773,I'm using an alternative resource provider,privat tutor,privat tutor,Education/Tutoring Service,No,Neutral
+Australia,esl,ultimate,9988774,I'm using an alternative resource provider,reading eggs!,reading eggs,Educational Platform,No,Neutral
+New Zealand,parent,ks1,9988775,I'm using an alternative resource provider,canva,canva,Graphic Design Tool,No,Neutral
+India,parent,ks3,9988776,I'm using an alternative resource provider,youtube videos,Youtube videos,Online Video Content,No,Neutral
+United Kingdom,educator,ultimate,9988777,I'm using an alternative resource provider,teachers pay teachers,teachers pay teachers,Educational Resource Marketplace,No,Neutral
+South Africa,parent,ks2,9988778,I'm using an alternative resource provider,just using chatgpt now,Error,Error,Error,Error
+Ireland,parent,ey,9988779,I'm using an alternative resource provider,abc mouse,abc mouse,Educational Platform,No,Neutral
+United States,parent,ultimate,9988780,I'm using an alternative resource provider,my local school provides ixl,ixl,Educational Platform,No,Neutral

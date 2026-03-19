@@ -30,3 +30,18 @@ Following the initial deployment, I implemented several senior level engineering
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
+
+   
+## Scaling to Entire Datasets
+This project is built to handle bulk data processing out of the box. The batch process script can easily scale to analyse thousands of rows of employee exit survey data. 
+
+To run this tool on your own full dataset you simply need to:
+1. Place your large CSV file into the main project folder.
+2. Ensure your spreadsheet contains a column named exactly 'Comment'.
+3. Open `batch_process.py` and update the `INPUT_FILE` variable to match your new filename.
+4. Run the script in your terminal and watch the AI seamlessly categorise your entire dataset.
+
+## Handling API Rate Limits
+When processing large datasets programmatically it is crucial to handle API rate limits. The free tier of the Google Gemini API restricts usage to 15 requests per minute. If you send data too quickly the server will reject the request and return a 429 Too Many Requests error. 
+
+To solve this I implemented a five second delay (`time.sleep(5)`) inside the batch processing loop. This simple throttle keeps the extraction process safely under the speed limit and ensures every single row is processed reliably without dropping any data.
