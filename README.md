@@ -6,6 +6,17 @@ This API is designed to solve a real world business problem: extracting structur
 ## The Challenge
 The raw data from exit surveys is often noisy as it contains typos, inconsistent naming conventions and multiple mentions within a single sentence. To analyse this data at scale, it must be converted from raw text into a structured JSON format.
 
+## Live Demo and API Testing
+You can test the live AI extraction engine right now without needing to write or run any code locally. The application is deployed to Render and includes a fully interactive Swagger documentation interface.
+
+1. Visit the live API portal at https://exit-survey-ai.onrender.com/docs
+2. Expand the green POST block for the extraction endpoint.
+3. Click the Try it out button.
+4. Type a messy sample exit survey comment into the string box (for example "I am leaving to use chatgpt as it is much faster and my students love reading eggs anyway").
+5. Click Execute and scroll down to the server response. 
+
+You will instantly see the AI return a perfectly structured JSON payload containing the competitor names, the categories, the AI tool flags and the user sentiment.
+
 ## Key Features and Tech Stack
 * **FastAPI:** A high performance Python web framework used to build the API endpoints.
 * **Google Gemini 2.5 Flash:** Used for advanced natural language processing.
